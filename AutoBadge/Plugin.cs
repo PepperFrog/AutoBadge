@@ -17,14 +17,7 @@ namespace AutoBadge
 
         public override void OnEnabled()
         {
-            if (ServerStatic.PermissionsHandler.GetGroup(Config.SpecialGroup) != null)
-            {
-                Exiled.Events.Handlers.Player.Verified += OnVerified;    
-            }
-            else
-            {
-                Log.Warn("The special group does not exist. please create it first and restart your server");
-            }
+            Exiled.Events.Handlers.Player.Verified += OnVerified;
             Instance = this;
             base.OnEnabled();
         }
@@ -43,7 +36,7 @@ namespace AutoBadge
                 string playername = ev.Player.Nickname.ToLower();
                 if (playername.Contains(Config.MagicWord.ToLower()))
                 {
-                    ev.Player.Group = ServerStatic.PermissionsHandler.GetGroup(Config.SpecialGroup);
+                    ev.Player.Group = Server.PermissionsHandler.GetGroup(Config.SpecialGroup);
                 }
             }
         }
@@ -68,7 +61,7 @@ namespace AutoBadge
         public bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)
         {
             Player ply = Player.Get(sender);
-            if (ply.ReferenceHub.IsHost)
+            if (ply == null)
             {
                 response = "Your are the DEDICATED_SERVER WTF DO YOU MEAN";
                 return false;
@@ -79,7 +72,12 @@ namespace AutoBadge
                 string playername = ply.Nickname.ToLower();
                 if (playername.Contains(Plugin.Instance.Config.MagicWord.ToLower()))
                 {
-                    ply.Group = ServerStatic.PermissionsHandler.GetGroup(Plugin.Instance.Config.SpecialGroup);
+                    if (Server.PermissionsHandler.GetGroup(Plugin.Instance.Config.SpecialGroup) != null)
+                    {
+                        response = "The group doesn't exist contact staff";
+                        return false;
+                    }
+                    ply.Group = Server.PermissionsHandler.GetGroup(Plugin.Instance.Config.SpecialGroup);
                     response = "Your group has been refreshed";
                     return true;
                 }
