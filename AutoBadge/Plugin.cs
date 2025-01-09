@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using CommandSystem;
 using Exiled.API.Features;
 using Exiled.API.Interfaces;
@@ -18,8 +19,8 @@ namespace AutoBadge
 
         public override void OnEnabled()
         {
-            Exiled.Events.Handlers.Player.Verified += OnVerified;
             Instance = this;
+            Exiled.Events.Handlers.Player.Verified += OnVerified;
             base.OnEnabled();
         }
 
@@ -35,9 +36,12 @@ namespace AutoBadge
             if (ev.Player.Group is null)
             {
                 string playername = ev.Player.Nickname.ToLower();
-                if (playername.Contains(Config.MagicWord.ToLower()))
+                foreach (var word in Config.MagicWords)
                 {
-                    ev.Player.Group = Server.PermissionsHandler.GetGroup(Config.SpecialGroup);
+                    if (playername.Contains(word.ToLower()))
+                    {
+                        ev.Player.Group = Server.PermissionsHandler.GetGroup(Config.SpecialGroup);
+                    }    
                 }
             }
         }
@@ -48,7 +52,7 @@ namespace AutoBadge
         public bool IsEnabled { get; set; } = true;
         public bool Debug { get; set; } = false;
 
-        public string MagicWord { get; set; } = "pepper";
+        public List<string> MagicWords { get; set; } = new List<string>() {"pepper"};
         public string SpecialGroup { get; set; } = "frog";
     }
 
@@ -67,28 +71,33 @@ namespace AutoBadge
                 response = "Your are the DEDICATED_SERVER WTF DO YOU MEAN";
                 return false;
             }
-
-            if (ply.Group.BadgeText.Equals(Server.PermissionsHandler.GetGroup(Plugin.Instance.Config.SpecialGroup)
+            
+            if (ply.Group is null || ply.Group.BadgeText.Equals(Server.PermissionsHandler.GetGroup(Plugin.Instance.Config.SpecialGroup)
                     .BadgeText))
             {
+                
                 string playername = ply.Nickname.ToLower();
-                if (playername.Contains(Plugin.Instance.Config.MagicWord.ToLower()))
+                foreach (var word in Plugin.Instance.Config.MagicWords)
                 {
-                    if (Server.PermissionsHandler.GetGroup(Plugin.Instance.Config.SpecialGroup) != null)
+                    if (playername.Contains(word.ToLower()))
                     {
-                        response = "The group doesn't exist contact staff";
+                        if (Server.PermissionsHandler.GetGroup(Plugin.Instance.Config.SpecialGroup) == null)
+                        {
+                            response = "The group doesn't exist contact staff";
+                            return false;
+                        }
+
+                        ply.Group = Server.PermissionsHandler.GetGroup(Plugin.Instance.Config.SpecialGroup);
+                        response = "Your group has been refreshed";
+                        return true;
+                    }
+                    else
+                    {
+                        response = "Your name does not contain the magic word";
                         return false;
                     }
-
-                    ply.Group = Server.PermissionsHandler.GetGroup(Plugin.Instance.Config.SpecialGroup);
-                    response = "Your group has been refreshed";
-                    return true;
                 }
-                else
-                {
-                    response = "Your name does not contain the magic word";
-                    return false;
-                }
+                
             }
             
             response = "Your already are in a group and can't be in two at the same time";
