@@ -37,8 +37,7 @@ namespace AutoBadge
                 string playername = ev.Player.Nickname.ToLower();
                 if (playername.Contains(Config.MagicWord.ToLower()))
                 {
-                    //ev.Player.Group = Server.PermissionsHandler.GetGroup(Config.SpecialGroup);
-                    ev.Player.ReferenceHub.serverRoles.SetGroup(Server.PermissionsHandler.GetGroup(Plugin.Instance.Config.SpecialGroup));
+                    ev.Player.Group = Server.PermissionsHandler.GetGroup(Config.SpecialGroup);
                 }
             }
         }
@@ -68,9 +67,9 @@ namespace AutoBadge
                 response = "Your are the DEDICATED_SERVER WTF DO YOU MEAN";
                 return false;
             }
-    //todo fix this shit
-            Log.Info(ply.Group);
-            if (!ply.Group.BadgeText.Equals(Server.PermissionsHandler.GetGroup(Plugin.Instance.Config.SpecialGroup).BadgeText))
+
+            if (ply.Group.BadgeText.Equals(Server.PermissionsHandler.GetGroup(Plugin.Instance.Config.SpecialGroup)
+                    .BadgeText))
             {
                 string playername = ply.Nickname.ToLower();
                 if (playername.Contains(Plugin.Instance.Config.MagicWord.ToLower()))
@@ -80,8 +79,8 @@ namespace AutoBadge
                         response = "The group doesn't exist contact staff";
                         return false;
                     }
-                    //ply.Group = Server.PermissionsHandler.GetGroup(Plugin.Instance.Config.SpecialGroup);
-                    ply.ReferenceHub.serverRoles.SetGroup(Server.PermissionsHandler.GetGroup(Plugin.Instance.Config.SpecialGroup));
+
+                    ply.Group = Server.PermissionsHandler.GetGroup(Plugin.Instance.Config.SpecialGroup);
                     response = "Your group has been refreshed";
                     return true;
                 }
@@ -91,10 +90,7 @@ namespace AutoBadge
                     return false;
                 }
             }
-
             
-            Log.Info(ply.Group.BadgeText);
-            Log.Info(ply.ReferenceHub.serverRoles);
             response = "Your already are in a group and can't be in two at the same time";
             return false;
         }

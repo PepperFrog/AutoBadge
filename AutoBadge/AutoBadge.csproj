@@ -74,9 +74,6 @@
         <Reference Include="System.Core"/>
         <Reference Include="System.Data"/>
         <Reference Include="System.Xml"/>
-        <Reference Include="Unity.TextMeshPro">
-          <HintPath>..\..\..\SL_LIB\Unity.TextMeshPro.dll</HintPath>
-        </Reference>
         <Reference Include="UnityEngine.CoreModule">
           <HintPath>$(EXILED_REFERENCES)\UnityEngine.CoreModule.dll</HintPath>
         </Reference>
