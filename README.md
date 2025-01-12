@@ -23,3 +23,7 @@ auto_badge:
 ## Command
 
 `.regrp` : Reload the badge
+
+## SSS
+
+You can also reload your badge with the Server Specific Settings
